@@ -20,7 +20,6 @@ class RBFN(object):
             hidden_shape: number of hidden radial basis functions,
             also, number of centers.
         """
-        # self.input_shape = input_shape
         self.hidden_shape = hidden_shape
         self.sigma = sigma
         self.centers = None
