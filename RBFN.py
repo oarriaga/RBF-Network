@@ -11,7 +11,7 @@ import numpy as np
 
 class RBFN(object):
 
-    def __init__(self, input_shape, hidden_shape, sigma=1.0):
+    def __init__(self, hidden_shape, sigma=1.0):
         """ radial basis function network
         # Arguments
             input_shape: dimension of the input data
@@ -20,7 +20,7 @@ class RBFN(object):
             hidden_shape: number of hidden radial basis functions,
             also, number of centers.
         """
-        self.input_shape = input_shape
+        # self.input_shape = input_shape
         self.hidden_shape = hidden_shape
         self.sigma = sigma
         self.centers = None
@@ -30,7 +30,7 @@ class RBFN(object):
         return np.exp(-self.sigma*np.linalg.norm(center-data_point)**2)
 
     def _calculate_interpolation_matrix(self, X):
-        """ Calculates interpolation matrix G using self._kernel_function
+        """ Calculates interpolation matrix using a kernel_function
         # Arguments
             X: Training data
         # Input shape
@@ -38,15 +38,20 @@ class RBFN(object):
         # Returns
             G: Interpolation matrix
         """
-        G = np.zeros((X.shape[0], self.hidden_shape))
+        G = np.zeros((len(X), self.hidden_shape))
         for data_point_arg, data_point in enumerate(X):
             for center_arg, center in enumerate(self.centers):
                 G[data_point_arg, center_arg] = self._kernel_function(
                         center, data_point)
         return G
 
+    def _select_centers(self, X):
+        random_args = np.random.choice(len(X), self.hidden_shape)
+        centers = X[random_args]
+        return centers
+
     def fit(self, X, Y):
-        """ Fits self.weights using linear regression
+        """ Fits weights using linear regression
         # Arguments
             X: training samples
             Y: targets
@@ -54,8 +59,7 @@ class RBFN(object):
             X: (num_data_samples, input_shape)
             Y: (num_data_samples, input_shape)
         """
-        random_args = np.random.permutation(X.shape[0]).tolist()
-        self.centers = [X[arg] for arg in random_args][:self.hidden_shape]
+        self.centers = self._select_centers(X)
         G = self._calculate_interpolation_matrix(X)
         self.weights = np.dot(np.linalg.pinv(G), Y)
 

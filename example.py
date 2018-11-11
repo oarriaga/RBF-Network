@@ -4,7 +4,7 @@ from RBFN import RBFN
 
 x = np.linspace(0, 10, 100)
 y = np.sin(x)
-model = RBFN(input_shape=1, hidden_shape=10)
+model = RBFN(hidden_shape=10, sigma=1.)
 model.fit(x, y)
 y_pred = model.predict(x)
 
