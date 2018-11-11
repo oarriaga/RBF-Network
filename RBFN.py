@@ -8,9 +8,10 @@ Description: Minimal implementation of a radial basis function network
 
 import numpy as np
 
+
 class RBFN(object):
 
-    def __init__(self, input_shape, hidden_shape, sigma = 1.0):
+    def __init__(self, input_shape, hidden_shape, sigma=1.0):
         """ radial basis function network
         # Arguments
             input_shape: dimension of the input data
@@ -28,7 +29,7 @@ class RBFN(object):
     def _kernel_function(self, center, data_point):
         return np.exp(-self.sigma*np.linalg.norm(center-data_point)**2)
 
-    def _calculate_interpolation_matrix(self,X):
+    def _calculate_interpolation_matrix(self, X):
         """ Calculates interpolation matrix G using self._kernel_function
         # Arguments
             X: Training data
@@ -40,11 +41,11 @@ class RBFN(object):
         G = np.zeros((X.shape[0], self.hidden_shape))
         for data_point_arg, data_point in enumerate(X):
             for center_arg, center in enumerate(self.centers):
-                G[data_point_arg,center_arg] = self._kernel_function(center,
-                                                                data_point)
+                G[data_point_arg, center_arg] = self._kernel_function(
+                        center, data_point)
         return G
 
-    def fit(self,X,Y):
+    def fit(self, X, Y):
         """ Fits self.weights using linear regression
         # Arguments
             X: training samples
@@ -56,9 +57,9 @@ class RBFN(object):
         random_args = np.random.permutation(X.shape[0]).tolist()
         self.centers = [X[arg] for arg in random_args][:self.hidden_shape]
         G = self._calculate_interpolation_matrix(X)
-        self.weights = np.dot(np.linalg.pinv(G),Y)
+        self.weights = np.dot(np.linalg.pinv(G), Y)
 
-    def predict(self,X):
+    def predict(self, X):
         """
         # Arguments
             X: test data
